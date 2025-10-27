@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://uncanny-coffin-jjq64jjw9vqx3p5xr-5000.app.github.dev/api',
+  baseURL: process.env.REACT_APP_API_URL || 'https://sales-tracker-ul4y.onrender.com/api',
 });
 
 export default API;
