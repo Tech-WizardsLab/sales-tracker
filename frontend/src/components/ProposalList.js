@@ -13,6 +13,7 @@ const ProposalList = ({ proposals }) => {
           <thead>
             <tr style={{ backgroundColor: '#f2f2f2' }}>
               <th>Company</th>
+              <th>Date</th> {/* ✅ New date column */}
               <th>Event</th>
               <th>Category</th>
               <th>Owner</th>
@@ -26,6 +27,7 @@ const ProposalList = ({ proposals }) => {
             {proposals.map((p) => (
               <tr key={p.id}>
                 <td>{p.company_name}</td>
+                <td>{p.date || '-'}</td> {/* ✅ Show date or dash */}
                 <td>{p.event_name}</td>
                 <td>{p.category}</td>
                 <td>{p.proposal_owner}</td>

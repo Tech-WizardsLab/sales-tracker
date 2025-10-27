@@ -2,8 +2,24 @@
 import React, { useState } from 'react';
 import API from '../api';
 
-const eventOptions = ["RENMAD Chile", "RENMAD Polonia", "RENMAD México", "Energy Summit 2025"];
-const owners = ["Iker", "Carlos", "María", "Ana"];
+const eventOptions = [
+  "Almacenamiento España",
+  "Invest",
+  "Biometano España",
+  "Storage Polska",
+  "Storage Italia",
+  "Datacenters Italia",
+  "Datacenters España",
+  "Storage Chile",
+  "H2 España",
+  "Storage México",
+];
+
+const owners = [
+  "Iker", "Tomás", "Sheetal", "Álvaro", "Cintia", "Ían",
+  "Jesús R.", "Elena", "Ewa", "Andrea", "Belén", "Carlos"
+];
+
 const probabilityOptions = ["Low", "Medium", "High"];
 const statusOptions = ["New", "Sent", "Follow-Up", "Won", "Lost"];
 
@@ -26,12 +42,11 @@ const ProposalForm = ({ onNewProposal, onCompanyChange, proposals }) => {
 
     if (name === 'company_name') {
       setFormData((prev) => ({ ...prev, company_name: value }));
-      onCompanyChange(value); // 👈 Notify parent to filter proposals
+      onCompanyChange(value);
       return;
     }
 
     if (name === 'category' && value === 'Speaker') {
-      // Reset fields not needed for speakers
       setFormData((prev) => ({
         ...prev,
         category: value,
@@ -49,7 +64,6 @@ const ProposalForm = ({ onNewProposal, onCompanyChange, proposals }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ Prevent duplicates (same company + event + owner)
     const duplicate = proposals.find(
       (p) =>
         p.company_name.toLowerCase() === formData.company_name.toLowerCase() &&
@@ -62,9 +76,14 @@ const ProposalForm = ({ onNewProposal, onCompanyChange, proposals }) => {
       return;
     }
 
+    const fullData = {
+      ...formData,
+      date: new Date().toISOString().split('T')[0], // ✅ today's date
+    };
+
     try {
-      await API.post('/proposals/', formData);
-      onNewProposal(); // 🔁 Refresh proposals list
+      await API.post('/proposals/', fullData);
+      onNewProposal();
       setFormData({
         company_name: '',
         event_name: eventOptions[0],
@@ -82,10 +101,9 @@ const ProposalForm = ({ onNewProposal, onCompanyChange, proposals }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
+    <form onSubmit={handleSubmit} className="proposal-form" style={{ marginBottom: '2rem' }}>
       <h2>Add New Proposal</h2>
 
-      {/* Company Name */}
       <label>Company Name</label>
       <input
         type="text"
@@ -95,7 +113,6 @@ const ProposalForm = ({ onNewProposal, onCompanyChange, proposals }) => {
         required
       />
 
-      {/* Event */}
       <label>Event</label>
       <select name="event_name" value={formData.event_name} onChange={handleChange} required>
         {eventOptions.map((event) => (
@@ -105,7 +122,6 @@ const ProposalForm = ({ onNewProposal, onCompanyChange, proposals }) => {
         ))}
       </select>
 
-      {/* Category */}
       <label>Category</label>
       <select name="category" value={formData.category} onChange={handleChange} required>
         <option value="Sponsorship">Sponsorship</option>
@@ -113,14 +129,8 @@ const ProposalForm = ({ onNewProposal, onCompanyChange, proposals }) => {
         <option value="Speaker">Speaker</option>
       </select>
 
-      {/* Proposal Owner */}
       <label>Proposal Owner</label>
-      <select
-        name="proposal_owner"
-        value={formData.proposal_owner}
-        onChange={handleChange}
-        required
-      >
+      <select name="proposal_owner" value={formData.proposal_owner} onChange={handleChange} required>
         {owners.map((owner) => (
           <option key={owner} value={owner}>
             {owner}
@@ -128,7 +138,6 @@ const ProposalForm = ({ onNewProposal, onCompanyChange, proposals }) => {
         ))}
       </select>
 
-      {/* Proposal Amount */}
       <label>Proposal Amount (€)</label>
       <input
         name="proposal_amount"
@@ -139,7 +148,6 @@ const ProposalForm = ({ onNewProposal, onCompanyChange, proposals }) => {
         disabled={isSpeaker}
       />
 
-      {/* Closing Probability */}
       <label>Closing Probability</label>
       <select
         name="closing_probability"
@@ -156,7 +164,6 @@ const ProposalForm = ({ onNewProposal, onCompanyChange, proposals }) => {
         ))}
       </select>
 
-      {/* What's Included */}
       <label>What's Included</label>
       <textarea
         name="whats_included"
@@ -165,7 +172,6 @@ const ProposalForm = ({ onNewProposal, onCompanyChange, proposals }) => {
         required
       />
 
-      {/* Status */}
       <label>Status</label>
       <select name="status" value={formData.status} onChange={handleChange}>
         {statusOptions.map((status) => (
