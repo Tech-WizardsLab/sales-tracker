@@ -78,11 +78,11 @@ const ProposalForm = ({ onNewProposal, onCompanyChange, proposals }) => {
 
     const fullData = {
       ...formData,
-      date: new Date().toISOString().split('T')[0], // ✅ today's date
+      date: new Date().toISOString().split('T')[0], // ✅ Adds today's date
     };
 
     try {
-      await API.post('/proposals/', fullData);
+      await API.post('/proposals/', fullData); // ✅ Use fullData with date
       onNewProposal();
       setFormData({
         company_name: '',

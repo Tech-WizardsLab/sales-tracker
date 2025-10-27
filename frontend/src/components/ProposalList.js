@@ -12,8 +12,8 @@ const ProposalList = ({ proposals }) => {
         <table border="1" cellPadding="6" style={{ borderCollapse: 'collapse', width: '100%' }}>
           <thead>
             <tr style={{ backgroundColor: '#f2f2f2' }}>
+              <th>Date</th> {/* ✅ NEW COLUMN */}
               <th>Company</th>
-              <th>Date</th> {/* ✅ New date column */}
               <th>Event</th>
               <th>Category</th>
               <th>Owner</th>
@@ -26,8 +26,8 @@ const ProposalList = ({ proposals }) => {
           <tbody>
             {proposals.map((p) => (
               <tr key={p.id}>
+                <td>{p.date || '-'}</td> {/* ✅ DISPLAY DATE */}
                 <td>{p.company_name}</td>
-                <td>{p.date || '-'}</td> {/* ✅ Show date or dash */}
                 <td>{p.event_name}</td>
                 <td>{p.category}</td>
                 <td>{p.proposal_owner}</td>
