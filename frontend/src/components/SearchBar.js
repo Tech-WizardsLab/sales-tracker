@@ -1,3 +1,4 @@
+// /workspaces/sales-tracker/frontend/src/components/SearchBar.js
 import React, { useState } from 'react';
 
 const SearchBar = ({ proposals }) => {
@@ -37,7 +38,7 @@ const SearchBar = ({ proposals }) => {
       if (prob === 'medium') return total + amount * 0.5;
       if (prob === 'high') return total + amount * 0.75;
 
-      // Fallback for old numeric probability (if stored as 25, 50, 75)
+      // Fallback for old numeric values
       if (prob === 25) return total + amount * 0.25;
       if (prob === 50) return total + amount * 0.5;
       if (prob === 75) return total + amount * 0.75;
@@ -46,10 +47,29 @@ const SearchBar = ({ proposals }) => {
     }, 0);
   };
 
+  // Determine which proposals are currently shown (search or all)
   const totalResults = query ? results : proposals;
+
+  // === Summary Calculations ===
   const weightedTotal = getWeightedAmount(totalResults);
   const proposalCount = totalResults.length;
 
+  const getStatusCountAndAmount = (statusLabel) => {
+    const filtered = totalResults.filter(
+      (p) => p.status && p.status.toLowerCase() === statusLabel
+    );
+    const totalAmount = filtered.reduce(
+      (sum, p) => sum + (parseFloat(p.proposal_amount) || 0),
+      0
+    );
+    return { count: filtered.length, amount: totalAmount };
+  };
+
+  const won = getStatusCountAndAmount('won');
+  const lost = getStatusCountAndAmount('lost');
+  const sent = getStatusCountAndAmount('sent');
+
+  // === Render ===
   return (
     <div className="form-section">
       <label><strong>🔎 General Search</strong></label>
@@ -71,9 +91,12 @@ const SearchBar = ({ proposals }) => {
           background: '#f9f9f9',
         }}
       >
-        <strong>📊 Summary</strong>
-        <p>Total Proposals: <strong>{proposalCount}</strong></p>
-        <p>Weighted Total Amount: <strong>€{weightedTotal.toFixed(2)}</strong></p>
+        <strong>📊 Proposals Summary</strong>
+        <p>🧮 Total Proposals: <strong>{proposalCount}</strong></p>
+        <p>💰 Weighted Pipeline with Probability: <strong>€{weightedTotal.toFixed(2)}</strong></p>
+        <p>🏆 Won Proposals: <strong>{won.count}</strong> ({won.amount ? `€${won.amount.toFixed(2)}` : '€0'})</p>
+        <p>📉 Lost Proposals: <strong>{lost.count}</strong> ({lost.amount ? `€${lost.amount.toFixed(2)}` : '€0'})</p>
+        <p>📤 Sent Proposals: <strong>{sent.count}</strong></p>
       </div>
 
       {/* 🔍 Search Results */}
